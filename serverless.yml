@@ -66,6 +66,7 @@ functions:
             path: /admin/account/register
             method: post
 resources:
+  Resources:
     SessionsTable:
           Type: AWS::DynamoDB::Table
           Properties:
