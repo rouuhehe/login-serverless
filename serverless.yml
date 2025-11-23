@@ -59,7 +59,12 @@ functions:
         - httpApi:
             path: /staff/account/login
             method: post
-
+  admin_register:
+      handler: adminRegister.lambda_handler
+      events:
+        - httpApi:
+            path: /admin/account/register
+            method: post
 resources:
     SessionsTable:
           Type: AWS::DynamoDB::Table
