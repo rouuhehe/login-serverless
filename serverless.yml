@@ -1,5 +1,5 @@
 org: yaritzalopez
-service: customer-serverless
+service: login-serverless
 
 provider:
   name: aws
