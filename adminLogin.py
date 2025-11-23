@@ -30,7 +30,7 @@ def lambda_handler(event, context):
     sessions = dynamo.Table(os.getenv("SESSIONS_TABLE"))
 
     old = sessions.scan(
-        FilterExpression="email = :u AND isActive = :v",
+        FilterExpression="admin_id = :u AND isActive = :v",
         ExpressionAttributeValues={":u": email, ":v": True}
     ).get("Items", [])
 
@@ -41,7 +41,7 @@ def lambda_handler(event, context):
             ExpressionAttributeValues={":f": False}
         )
 
-    res = admins.get_item(Key={"email": email})
+    res = admins.get_item(Key={"admin_id": email})
 
     if "Item" not in res:
         return {"statusCode": 404, "body": "admin not found"}
@@ -58,7 +58,7 @@ def lambda_handler(event, context):
 
     # CREAMOS TOKEN
     payload = {
-        "sub": admin["email"],
+        "sub": admin["admin_id"],
         "session_id": session_id,
         "iat": int(time.time()),
         "exp": int(time.time()) + 43200,
@@ -68,7 +68,7 @@ def lambda_handler(event, context):
 
     sessions.put_item(Item={
         "session_id": session_id,
-        "email": admin["email"],
+        "admin_id": admin["admin_id"],
         "token": token,
         "created_at": int(time.time()),
         "expires_at": payload["exp"],
@@ -77,7 +77,7 @@ def lambda_handler(event, context):
 
     log_info = {
         "event": "login",
-        "admin_id": admin["email"],
+        "admin_id": admin["admin_id"],
         "session_id": session_id,
         "timestamp": int(time.time())
     }
