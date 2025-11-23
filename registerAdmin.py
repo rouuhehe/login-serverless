@@ -13,7 +13,7 @@ def lambda_handler(event, context):
         else:
             body = event  
 
-        table_name = os.environ["TABLE_NAME"]
+        table_name = os.environ["ADMINS_TABLE"]
         if 'admin_code' not in body or body['admin_code'] != os.environ.get('ADMIN_REGISTRATION_CODE'):
             return {
                 'statusCode': 403,
