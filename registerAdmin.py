@@ -42,9 +42,9 @@ def lambda_handler(event, context):
 
         return {
             'statusCode': 200,
-            'body': {
-                'admin': json.dumps(return_data)
-                }
+            'body': json.dumps({
+                'admin': return_data
+                })
         }
     
     except ClientError as e:

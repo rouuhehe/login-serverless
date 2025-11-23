@@ -38,12 +38,15 @@ functions:
         - httpApi:
             path: /customer/account/login
             method: post
+            cors: true 
+            integration: lambda
 
   verify_token:
     handler: verify_token.lambda_handler
     events:
       - httpApi:
           path: /account/verify
+          cors: true 
           method: post
 
   admin_login:
@@ -52,6 +55,7 @@ functions:
         - httpApi:
             path: /admin/account/login
             method: post
+            integration: lambda
   
   staff_login:
       handler: staffLogin.lambda_handler
@@ -59,12 +63,16 @@ functions:
         - httpApi:
             path: /staff/account/login
             method: post
+            cors: true 
+            integration: lambda
   admin_register:
       handler: registerAdmin.lambda_handler
       events:
         - httpApi:
             path: /admin/account/register
             method: post
+            cors: true 
+            integration: lambda
 resources:
   Resources:
     SessionsTable:
