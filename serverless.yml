@@ -60,7 +60,7 @@ functions:
             path: /staff/account/login
             method: post
   admin_register:
-      handler: adminRegister.lambda_handler
+      handler: registerAdmin.lambda_handler
       events:
         - httpApi:
             path: /admin/account/register
