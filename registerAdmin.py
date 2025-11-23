@@ -20,13 +20,11 @@ def lambda_handler(event, context):
                 'body': 'invalid admin_code'
             }
         
-        admin_id = str(uuid.uuid4())
         now = str(int(time()))
 
         admin_data = {
-            "admin_id": admin_id,
+            "admin_id": body['email'].lower(),
             "name": body['name'].lower(),
-            "email": body['email'].lower(),
             "createdAt": now,
             "updatedAt": now,
             "isActive": True,

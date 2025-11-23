@@ -19,10 +19,10 @@ def lambda_handler(event, context):
     if isinstance(body, str):
         body = json.loads(body)
 
-    customer_id = body["customer_id"]
+    email = body["email"]
     password = body["password"]
 
-    if not customer_id or not password:
+    if not email or not password:
         return {"statusCode": 400, "body": "missing fields"}
 
     dynamo = boto3.resource('dynamodb')
@@ -30,8 +30,8 @@ def lambda_handler(event, context):
     sessions = dynamo.Table(os.getenv("SESSIONS_TABLE"))
 
     old = sessions.scan(
-        FilterExpression="customer_id = :u AND isActive = :v",
-        ExpressionAttributeValues={":u": customer_id, ":v": True}
+        FilterExpression="email = :u AND isActive = :v",
+        ExpressionAttributeValues={":u": email, ":v": True}
     ).get("Items", [])
 
     for s in old:
@@ -43,7 +43,7 @@ def lambda_handler(event, context):
 
 
     # BUSCAMOS AL USUARIO DIRECTO POR Y user_id
-    res = customers.get_item(Key={"customer_id": customer_id})
+    res = customers.get_item(Key={"email": email})
 
     if "Item" not in res:
         return {"statusCode": 404, "body": "customer not found"}
@@ -71,7 +71,7 @@ def lambda_handler(event, context):
 
     sessions.put_item(Item={
         "session_id": session_id,
-        "customer_id": customer["customer_id"],
+        "email": customer["email"],
         "token": token,
         "created_at": int(time.time()),
         "expires_at": payload["exp"],
@@ -80,7 +80,7 @@ def lambda_handler(event, context):
 
     log_info = {
         "event": "login",
-        "customer_id": customer["customer_id"],
+        "email": customer["email"],
         "session_id": session_id,
         "timestamp": int(time.time())
     }
