@@ -1,0 +1,88 @@
+org: yaritzalopez
+service: customer-serverless
+
+provider:
+  name: aws
+  runtime: python3.13
+  memorySize: 1024
+  timeout: 30
+  iam:
+    role: arn:aws:iam::157918330129:role/LabRole
+  httpApi:
+    cors:
+      allowedOrigins:
+        - "*"           
+      allowedHeaders:
+        - "*"
+      allowedMethods:
+        - GET
+        - POST
+        - PATCH
+        - PUT
+        - DELETE
+        - OPTIONS
+
+
+  environment:
+    CUSTOMERS_TABLE: ${sls:stage}-t_customers
+    SESSIONS_TABLE: ${sls:stage}-t_sessions
+    ADMINS_TABLE: ${sls:stage}-t_admins
+    STAFF_TABLE: ${sls:stage}-t_staff
+    ADMIN_REGISTRATION_CODE: vegeta777
+    JWT_SECRET: eso_tilin_1234
+
+functions:
+  customer_login:
+      handler: customerLogin.lambda_handler
+      events:
+        - httpApi:
+            path: /customer/account/login
+            method: post
+
+  verify_token:
+    handler: verify_token.lambda_handler
+    events:
+      - httpApi:
+          path: /account/verify
+          method: post
+
+  admin_login:
+      handler: adminLogin.lambda_handler
+      events:
+        - httpApi:
+            path: /admin/account/login
+            method: post
+  
+  staff_login:
+      handler: staffLogin.lambda_handler
+      events:
+        - httpApi:
+            path: /staff/account/login
+            method: post
+
+resources:
+    SessionsTable:
+          Type: AWS::DynamoDB::Table
+          Properties:
+            TableName: ${self:provider.environment.SESSIONS_TABLE}
+            BillingMode: PAY_PER_REQUEST
+            AttributeDefinitions:
+              - AttributeName: session_id
+                AttributeType: S
+            KeySchema:
+              - AttributeName: session_id
+                KeyType: HASH
+            TimeToLiveSpecification:
+              AttributeName: expires_at
+              Enabled: true
+    AdminsTable:
+          Type: AWS::DynamoDB::Table
+          Properties:
+            TableName: ${self:provider.environment.ADMINS_TABLE}
+            BillingMode: PAY_PER_REQUEST
+            AttributeDefinitions:
+              - AttributeName: admin_id
+                AttributeType: S
+            KeySchema:
+              - AttributeName: admin_id
+                KeyType: HASH
